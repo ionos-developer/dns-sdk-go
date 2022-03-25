@@ -39,7 +39,7 @@ func (r ApiCreateRecordsRequest) Record(record []Record) ApiCreateRecordsRequest
 	return r
 }
 
-func (r ApiCreateRecordsRequest) Execute() (*RecordResponse, *http.Response, error) {
+func (r ApiCreateRecordsRequest) Execute() ([]RecordResponse, *http.Response, error) {
 	return r.ApiService.CreateRecordsExecute(r)
 }
 
@@ -61,13 +61,13 @@ func (a *RecordsApiService) CreateRecords(ctx context.Context, zoneId string) Ap
 }
 
 // Execute executes the request
-//  @return RecordResponse
-func (a *RecordsApiService) CreateRecordsExecute(r ApiCreateRecordsRequest) (*RecordResponse, *http.Response, error) {
+//  @return []RecordResponse
+func (a *RecordsApiService) CreateRecordsExecute(r ApiCreateRecordsRequest) ([]RecordResponse, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *RecordResponse
+		localVarReturnValue  []RecordResponse
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "RecordsApiService.CreateRecords")

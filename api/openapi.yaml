@@ -300,7 +300,9 @@ paths:
                 Successful response:
                   $ref: '#/components/examples/record-list-created'
               schema:
-                $ref: '#/components/schemas/record-response'
+                items:
+                  $ref: '#/components/schemas/record-response'
+                type: array
           description: Records created.
         "400":
           content:
