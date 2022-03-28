@@ -103,6 +103,7 @@ Class | Method | HTTP request | Description
 *RecordsApi* | [**CreateRecords**](docs/RecordsApi.md#createrecords) | **Post** /v1/zones/{zoneId}/records | 
 *RecordsApi* | [**DeleteRecord**](docs/RecordsApi.md#deleterecord) | **Delete** /v1/zones/{zoneId}/records/{recordId} | 
 *RecordsApi* | [**GetRecord**](docs/RecordsApi.md#getrecord) | **Get** /v1/zones/{zoneId}/records/{recordId} | 
+*RecordsApi* | [**NormalizeRecord**](docs/RecordsApi.md#normalizerecord) | **Post** /v1/records/normalizer | 
 *RecordsApi* | [**UpdateRecord**](docs/RecordsApi.md#updaterecord) | **Put** /v1/zones/{zoneId}/records/{recordId} | 
 *ZonesApi* | [**GetZone**](docs/ZonesApi.md#getzone) | **Get** /v1/zones/{zoneId} | 
 *ZonesApi* | [**GetZones**](docs/ZonesApi.md#getzones) | **Get** /v1/zones | 

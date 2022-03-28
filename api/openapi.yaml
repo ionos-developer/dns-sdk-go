@@ -547,6 +547,66 @@ paths:
           description: Internal server error.
       tags:
       - Records
+  /v1/records/normalizer:
+    post:
+      description: Returns the normalized record.
+      operationId: normalizeRecord
+      requestBody:
+        content:
+          application/json:
+            examples:
+              Record:
+                $ref: '#/components/examples/record-not-normalized'
+            schema:
+              $ref: '#/components/schemas/record'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                Successful response:
+                  $ref: '#/components/examples/record-normalized'
+              schema:
+                $ref: '#/components/schemas/record'
+          description: Normalized record.
+        "400":
+          content:
+            application/json:
+              examples:
+                Invalid Request:
+                  $ref: '#/components/examples/bad-request-invalid-data-error'
+                Invalid Record:
+                  $ref: '#/components/examples/bad-request-invalid-record-error'
+              schema:
+                items:
+                  $ref: '#/components/schemas/error'
+                type: array
+          description: Bad request.
+        "401":
+          content:
+            application/json:
+              examples:
+                Unauthorized:
+                  $ref: '#/components/examples/unauthorized-error'
+              schema:
+                items:
+                  $ref: '#/components/schemas/error'
+                type: array
+          description: Unauthorized request.
+        "500":
+          content:
+            application/json:
+              examples:
+                Internal Server Error:
+                  $ref: '#/components/examples/internal-server-error'
+              schema:
+                items:
+                  $ref: '#/components/schemas/error'
+                type: array
+          description: Internal server error.
+      tags:
+      - Records
   /v1/dyndns:
     delete:
       description: Disable Dynamic Dns
@@ -786,10 +846,24 @@ components:
         name: example-zone.de
         rootName: example-zone.de
         type: A
-        content: string
+        content: 1.1.1.1
         changeDate: 2022-23-03T13:04:25.772Z
         ttl: 0
         prio: 0
+        disabled: false
+    record-not-normalized:
+      value:
+        name: example-zone.de
+        type: caa
+        content: 0 issuewild "“example.org"
+        ttl: 0
+        disabled: false
+    record-normalized:
+      value:
+        name: example-zone.de
+        type: CAA
+        content: 0 issuewild "example.org"
+        ttl: 0
         disabled: false
     unauthorized-error:
       value:
@@ -803,6 +877,13 @@ components:
       value:
       - code: INVALID_DATA
         message: The request body is invalid or not supported by the endpoint.
+    bad-request-invalid-record-error:
+      value:
+      - code: INVALID_RECORD
+        message: Record is invalid.
+        parameters:
+          requiredFields:
+          - type
     record-not-found-error:
       value:
       - code: RECORD_NOT_FOUND
@@ -859,11 +940,11 @@ components:
         type: NATIVE
         records:
         - id: 22af3414-abbe-9e11-5df5-66fbe8e334b4
-          name: string
-          rootName: string
+          name: example-zone.de
+          rootName: example-zone.de
           type: A
-          content: string
-          changeDate: string
+          content: 1.1.1.1
+          changeDate: 2019-12-09T13:04:25.772Z
           ttl: 0
           prio: 0
           disabled: false
