@@ -16,13 +16,14 @@ info:
     <h2>
     <details>
       <summary>Release notes</summary>
-
-      Vesion 1.0.0
-      Exposed CRUD operations for customer zone.
+      <ul>
+        <li>Version 1.0.0 Exposed CRUD operations for customer zone.</li>
+        <li>Version 1.0.1 Added response body for UPDATE and CREATE record operations.</li>
+      </ul>
     </details>
     </h2>
   title: DNS API
-  version: 1.0.0
+  version: 1.0.1
 servers:
 - description: Production server
   url: https://api.hosting.ionos.com/dns
@@ -309,7 +310,7 @@ paths:
             application/json:
               examples:
                 Bad request:
-                  $ref: '#/components/examples/invalid-record-without-id'
+                  $ref: '#/components/examples/bad-request-error'
                 Invalid Domain Name:
                   $ref: '#/components/examples/bad-request-invalid-domain-name-error'
               schema:
@@ -426,7 +427,7 @@ paths:
             application/json:
               examples:
                 Record:
-                  $ref: '#/components/examples/record'
+                  $ref: '#/components/examples/record-response'
               schema:
                 $ref: '#/components/schemas/record-response'
           description: Succesful response.
@@ -488,6 +489,9 @@ paths:
       requestBody:
         content:
           application/json:
+            examples:
+              Record:
+                $ref: '#/components/examples/record-update'
             schema:
               $ref: '#/components/schemas/record-update'
         required: true
@@ -609,7 +613,9 @@ paths:
       - Records
   /v1/dyndns:
     delete:
-      description: Disable Dynamic Dns
+      description: |
+        Disable Dynamic Dns.
+        The following quota applies: 2 requests per minute per IP address.
       operationId: disableDynDns
       responses:
         "200":
@@ -625,6 +631,8 @@ paths:
                   $ref: '#/components/schemas/error'
                 type: array
           description: Unauthorized request.
+        "429":
+          description: Rate limit excedeed.
         "500":
           content:
             application/json:
@@ -639,8 +647,9 @@ paths:
       tags:
       - Dynamic DNS
     post:
-      description: Activate Dynamic Dns for a bundle of (sub)domains. The url from
-        response will be used to update the ips of the (sub)domains.
+      description: |
+        Activate Dynamic Dns for a bundle of (sub)domains. The url from response will be used to update the ips of the (sub)domains.
+        The following quota applies: 2 requests per minute per IP address.
       operationId: activateDynDns
       requestBody:
         content:
@@ -690,6 +699,8 @@ paths:
                   $ref: '#/components/schemas/error'
                 type: array
           description: Unauthorized request.
+        "429":
+          description: Rate limit excedeed.
         "500":
           content:
             application/json:
@@ -705,7 +716,9 @@ paths:
       - Dynamic DNS
   /v1/dyndns/{bulkId}:
     delete:
-      description: Disable Dynamic Dns for bulk id
+      description: |
+        Disable Dynamic Dns for bulk id.
+        The following quota applies: 2 requests per minute per IP address.
       operationId: deleteDynDns
       parameters:
       - description: Dynamic Dns configuration identifier.
@@ -730,6 +743,8 @@ paths:
                   $ref: '#/components/schemas/error'
                 type: array
           description: Unauthorized request.
+        "429":
+          description: Rate limit excedeed.
         "500":
           content:
             application/json:
@@ -744,7 +759,9 @@ paths:
       tags:
       - Dynamic DNS
     put:
-      description: Update Dynamic Dns for bulk id
+      description: |
+        Update Dynamic Dns for bulk id.
+        The following quota applies: 2 requests per minute per IP address.
       operationId: updateDynDns
       parameters:
       - description: Dynamic Dns configuration identifier.
@@ -814,6 +831,8 @@ paths:
                   $ref: '#/components/schemas/error'
                 type: array
           description: DynDns not found error.
+        "429":
+          description: Rate limit excedeed.
         "500":
           content:
             application/json:
@@ -831,6 +850,14 @@ components:
   examples:
     record:
       value:
+        name: example-zone.de
+        type: A
+        content: 1.2.3.4
+        ttl: 3600
+        prio: 10
+        disabled: false
+    record-response:
+      value:
         id: 22af3414-abbe-9e11-5df5-66fbe8e334b4
         name: example-zone.de
         rootName: example-zone.de
@@ -838,8 +865,14 @@ components:
         content: 1.2.3.4
         changeDate: 2019-12-09T13:04:25.772Z
         ttl: 3600
-        prio: 10
+        prio: 0
         disabled: false
+    record-update:
+      value:
+        disabled: false
+        content: 1.1.1.1
+        ttl: 3600
+        prio: 0
     record-updated:
       value:
         id: 22af3414-abbe-9e11-5df5-66fbe8e334b4
@@ -848,7 +881,7 @@ components:
         type: A
         content: 1.1.1.1
         changeDate: 2022-23-03T13:04:25.772Z
-        ttl: 0
+        ttl: 3600
         prio: 0
         disabled: false
     record-not-normalized:
@@ -856,14 +889,14 @@ components:
         name: example-zone.de
         type: caa
         content: 0 issuewild "“example.org"
-        ttl: 0
+        ttl: 3600
         disabled: false
     record-normalized:
       value:
         name: example-zone.de
         type: CAA
         content: 0 issuewild "example.org"
-        ttl: 0
+        ttl: 3600
         disabled: false
     unauthorized-error:
       value:
@@ -905,27 +938,12 @@ components:
         message: Record is invalid.
         parameters:
           errorRecord:
-            id: 22af3414-abbe-9e11-5df5-66fbe8e334b4
             name: example-zone.de
             disabled: false
-            rootName: example-zone.com
-            changeDate: 2019-12-09T13:04:25.772Z
-            content: 1.1.1.1
-            ttl: 0
+            rootName: example-zone.de
+            content: 1.2.3.4
+            ttl: 3600
             prio: 0
-          requiredFields:
-          - type
-    invalid-record-without-id:
-      value:
-      - code: INVALID_RECORD
-        message: Record is invalid.
-        parameters:
-          errorRecord:
-            name: example-zone.de
-            disabled: false
-            rootName: example-zone.com
-            content: 1.1.1.1
-            ttl: 0
           requiredFields:
           - type
     zones:
@@ -945,7 +963,7 @@ components:
           type: A
           content: 1.1.1.1
           changeDate: 2019-12-09T13:04:25.772Z
-          ttl: 0
+          ttl: 3600
           prio: 0
           disabled: false
     record-list:
@@ -954,7 +972,7 @@ components:
         type: A
         content: 1.2.3.4
         ttl: 3600
-        prio: 10
+        prio: 0
         disabled: false
     record-list-created:
       value:
@@ -965,7 +983,7 @@ components:
         content: 1.2.3.4
         changeDate: 2022-23-03T13:04:25.772Z
         ttl: 3600
-        prio: 10
+        prio: 0
         disabled: false
     dyn-dns-request:
       value:
@@ -1112,13 +1130,19 @@ components:
     customer-zone:
       example:
         records:
-        - name: name
+        - rootName: rootName
+          name: name
+          changeDate: changeDate
           disabled: false
+          id: id
           prio: 6
           ttl: 0
           content: content
-        - name: name
+        - rootName: rootName
+          name: name
+          changeDate: changeDate
           disabled: false
+          id: id
           prio: 6
           ttl: 0
           content: content
@@ -1135,7 +1159,7 @@ components:
           $ref: '#/components/schemas/zoneTypes'
         records:
           items:
-            $ref: '#/components/schemas/record'
+            $ref: '#/components/schemas/record-response'
           type: array
       type: object
     dyn-dns-request:
