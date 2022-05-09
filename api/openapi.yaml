@@ -2,15 +2,15 @@ openapi: 3.0.2
 info:
   contact:
     name: API Beta Support
-    url: /docs/getstarted#support
+    url: https://developer.hosting.ionos.com/docs/getstarted#support
   description: |
     ## Working with the API
-    Every endpoint uses the `X-API-Key` header for authorization, to obtain the key please see the [Official Documentation](/docs/getstarted).
+    Every endpoint uses the `X-API-Key` header for authorization, to obtain the key please see the [Official Documentation](https://developer.hosting.ionos.com/docs/getstarted).
 
     Please note that any zone or record updates might conflict with active services. In such cases, the DNS records belonging to the conflicting services will be deactivated.
 
     ## Support
-    Support questions may be posted in English: <a href='/docs/getstarted#support'>API Beta Support</a>.
+    Support questions may be posted in English: <a href='https://developer.hosting.ionos.com/docs/getstarted#support'>API Beta Support</a>.
 
     Please note that in the Beta phase we offer support in the business Hours Mo-Fri 9:00-17:00 EET.
     <h2>
